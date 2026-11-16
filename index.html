@@ -170,8 +170,7 @@ footer{text-align:center;color:var(--mut);font-size:15px;padding:20px 20px 90px}
   <div class="brbtns">
    <button class="brbtn num" id="brnum">📞 ٩٥١٥٣٣٩٢</button>
    <div class="brsub" id="brsub"><a class="brbtn call" href="tel:+96895153392">اتصال</a><a class="brbtn wa" href="https://wa.me/96895153392?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%D8%8C%20%D8%A3%D8%AA%D9%88%D8%A7%D8%B5%D9%84%20%D8%A8%D8%AE%D8%B5%D9%88%D8%B5%20%D9%85%D9%81%D8%B1%D8%AF%D8%A7%D8%AA%20%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D8%B6%D9%8A%D8%A7%D8%AA" target="_blank" rel="noopener">واتساب</a></div>
-   <button class="brbtn inst" id="brinst">⬇ تثبيت التطبيق على جهازك</button><button class="brbtn dl" id="brdl">💾 تنزيل نسخة تعمل دون إنترنت</button>
-   <div id="brhelp" class="brhelp" hidden></div>
+   <button class="brbtn inst" id="brinst">⬇ تثبيت التطبيق على جهازك</button><div id="brhelp" class="brhelp" hidden></div>
    <a class="brbtn ig" href="https://www.instagram.com/nizwadeveloper/" target="_blank" rel="noopener">@nizwadeveloper</a>
   </div></div>
 </div>
@@ -443,12 +442,10 @@ async function installApp(){
   if(ios)t='<b>آيفون/آيباد:</b> افتح الرابط في <b>سفاري</b>، اضغط زر المشاركة ⬆ ثم «إضافة إلى الشاشة الرئيسية».';
   else if(fb)t='أنت داخل متصفح تطبيق آخر. اضغط ⋮ ثم «فتح في المتصفح» (Chrome أو Safari) وكرر الخطوة.';
   else if(ff)t='متصفح فايرفوكس للكمبيوتر لا يدعم التثبيت. افتح الرابط في <b>Chrome</b> أو <b>Edge</b>.';
-  else t='<b>أندرويد/كمبيوتر:</b> من قائمة المتصفح ⋮ اختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية» (في Chrome وEdge). إن لم يظهر الخيار فحدّث الصفحة وانتظر ثوانٍ ثم أعد المحاولة، أو استخدم «تنزيل نسخة تعمل دون إنترنت».';
+  else t='<b>أندرويد/كمبيوتر:</b> من قائمة المتصفح ⋮ اختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية» (في Chrome وEdge). إن لم يظهر الخيار فحدّث الصفحة وانتظر ثوانٍ ثم أعد المحاولة،.';
   h.innerHTML=t;h.hidden=false}
 $('#brinst').onclick=installApp;
 if(/[?&]install=1/.test(location.search)&&!standalone){openBr();$('#brinst').style.animation='pulse 1.2s 3';}
-$('#brdl').onclick=async()=>{let h;try{h=await (await fetch(location.href.split('#')[0])).text()}catch(e){h='<!doctype html>'+document.documentElement.outerHTML}
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([h],{type:'text/html'}));a.download='مفردات-الرياضيات-تفاعلي.html';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)};
 if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{});
 $('#brnum').onclick=()=>$('#brsub').classList.toggle('on');
 
