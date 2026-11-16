@@ -124,7 +124,7 @@ main{max-width:1020px;margin:0 auto;padding:16px}
 .empty{text-align:center;color:var(--mut);padding:40px}
 .quizsum{background:linear-gradient(135deg,#002060,#0a4fa8);color:#fff;border-radius:20px;padding:18px;text-align:center;margin:16px 0}
 footer{text-align:center;color:var(--mut);font-size:15px;padding:20px 20px 90px}
-#toasts{position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:60;display:grid;gap:8px;width:min(92vw,420px);pointer-events:none}
+#toasts{position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:200;display:grid;gap:8px;width:min(92vw,420px);pointer-events:none}
 .toast{background:var(--navy);color:#fff;border-radius:14px;padding:8px 14px;box-shadow:0 8px 24px rgba(0,0,0,.35);animation:tin .4s,tout .5s 3.2s forwards;display:flex;gap:10px;align-items:center}
 :root[data-theme=dark] .toast{background:#223a5e}
 .toast.gold{background:linear-gradient(135deg,#8a5f00,#c58a00);color:#fff}
@@ -147,7 +147,7 @@ footer{text-align:center;color:var(--mut);font-size:15px;padding:20px 20px 90px}
 .brbtn{display:flex;gap:8px;align-items:center;justify-content:center;text-decoration:none;border-radius:14px;padding:9px 14px;font-weight:700;color:#fff;border:0;font-size:18px}
 .brbtn.num{background:var(--navy);color:#fff}
 .brbtn.call{background:#0b6fd1}.brbtn.wa{background:#1faa59}.brbtn.ig{background:linear-gradient(45deg,#f09433,#dc2743 55%,#bc1888)}
-.brbtn.inst{background:linear-gradient(135deg,#c58a00,#f2c14e);color:#241a00}.brbtn.dl{background:#4a5b73}.brbtn[hidden]{display:none}.brsub{display:none;grid-template-columns:1fr 1fr;gap:8px}.brsub.on{display:grid}
+.brbtn.inst{background:linear-gradient(135deg,#c58a00,#f2c14e);color:#241a00}.brbtn.dl{background:#4a5b73}.brbtn[hidden]{display:none}.brhelp{background:var(--bg);border:1px dashed var(--navy);border-radius:12px;padding:8px 12px;font-size:16px;text-align:right;line-height:1.6}.brhelp[hidden]{display:none}.brsub{display:none;grid-template-columns:1fr 1fr;gap:8px}.brsub.on{display:grid}
 .brx{position:absolute;top:8px;left:10px;border:0;background:transparent;font-size:26px;line-height:1}
 :focus-visible{outline:3px solid var(--sky);outline-offset:2px}
 @media(max-width:560px){body{font-size:17px}.qt{font-size:19px}.dom{grid-template-columns:100px 1fr 54px}#brchip span{display:none}#brchip{padding:4px}}
@@ -170,6 +170,7 @@ footer{text-align:center;color:var(--mut);font-size:15px;padding:20px 20px 90px}
    <button class="brbtn num" id="brnum">📞 ٩٥١٥٣٣٩٢</button>
    <div class="brsub" id="brsub"><a class="brbtn call" href="tel:+96895153392">اتصال</a><a class="brbtn wa" href="https://wa.me/96895153392?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%D8%8C%20%D8%A3%D8%AA%D9%88%D8%A7%D8%B5%D9%84%20%D8%A8%D8%AE%D8%B5%D9%88%D8%B5%20%D9%85%D9%81%D8%B1%D8%AF%D8%A7%D8%AA%20%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D8%B6%D9%8A%D8%A7%D8%AA" target="_blank" rel="noopener">واتساب</a></div>
    <button class="brbtn inst" id="brinst">⬇ تثبيت التطبيق على جهازك</button><button class="brbtn dl" id="brdl">💾 تنزيل نسخة تعمل دون إنترنت</button>
+   <div id="brhelp" class="brhelp" hidden></div>
    <a class="brbtn ig" href="https://www.instagram.com/nizwadeveloper/" target="_blank" rel="noopener">@nizwadeveloper</a>
   </div></div>
 </div>
@@ -431,9 +432,16 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();dpr0=e});
 addEventListener('appinstalled',()=>{dpr0=null;toast('<span class="ic">✓</span><span>تم تثبيت التطبيق</span>')});
 if(standalone)$('#brinst').hidden=true;
 $('#brinst').onclick=async()=>{
+  const h=$('#brhelp');
   if(dpr0){dpr0.prompt();await dpr0.userChoice;dpr0=null;return}
-  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
-  toast(ios?'<span class="ic">⬆</span><span>في سفاري: اضغط زر المشاركة ثم «إضافة إلى الشاشة الرئيسية»</span>':'<span class="ic">⋮</span><span>من قائمة المتصفح اختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية». يتطلب فتح الملف من رابط https.</span>')};
+  const ua=navigator.userAgent,ios=/iphone|ipad|ipod/i.test(ua),fb=/FBAN|FBAV|Instagram|WhatsApp|Line\/|Snapchat|MiuiBrowser/i.test(ua),ff=/firefox/i.test(ua)&&!/android/i.test(ua);
+  let t;
+  if(!/^https:$/.test(location.protocol))t='التثبيت يتطلب فتح التطبيق من رابطه على الإنترنت (https). استخدم زر «تنزيل نسخة تعمل دون إنترنت» بدلاً من ذلك.';
+  else if(ios)t='<b>آيفون/آيباد:</b> افتح الرابط في <b>سفاري</b>، اضغط زر المشاركة ⬆ ثم «إضافة إلى الشاشة الرئيسية».';
+  else if(fb)t='أنت داخل متصفح تطبيق آخر. اضغط ⋮ ثم «فتح في المتصفح» (Chrome أو Safari) وكرر الخطوة.';
+  else if(ff)t='متصفح فايرفوكس للكمبيوتر لا يدعم التثبيت. افتح الرابط في <b>Chrome</b> أو <b>Edge</b>.';
+  else t='<b>أندرويد/كمبيوتر:</b> من قائمة المتصفح ⋮ اختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية» (في Chrome وEdge). إن لم يظهر الخيار فحدّث الصفحة وانتظر ثوانٍ ثم أعد المحاولة، أو استخدم «تنزيل نسخة تعمل دون إنترنت».';
+  h.innerHTML=t;h.hidden=false};
 $('#brdl').onclick=async()=>{let h;try{h=await (await fetch(location.href.split('#')[0])).text()}catch(e){h='<!doctype html>'+document.documentElement.outerHTML}
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([h],{type:'text/html'}));a.download='مفردات-الرياضيات-تفاعلي.html';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)};
 if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{});
